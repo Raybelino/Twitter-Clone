@@ -1,0 +1,42 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: twitter_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: twitter_clone
+      MYSQL_USER: twitter_user
+      MYSQL_PASSWORD: twitter_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - twitter_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: twitter_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - twitter_network
+
+  adminer:
+    image: adminer
+    container_name: twitter_adminer
+    ports:
+      - "8080:8080"
+    networks:
+      - twitter_network
+
+volumes:
+  mysql_data:
+  redis_data:
+
+networks:
+  twitter_network:
+    driver: bridge
